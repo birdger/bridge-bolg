@@ -33,7 +33,7 @@ public class Post {
     @Column(length = 255)
     private String summary;
 
-    @Column(columnDefinition = "CLOB")
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @Column(length = 255)
