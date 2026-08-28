@@ -35,12 +35,14 @@ public class PostService {
         this.categoryService = categoryService;
     }
 
+    @Transactional(readOnly = true)
     public PageResponse<PostSummaryResponse> listPublished(int page, int size, String keyword, String categorySlug) {
         Pageable pageable = PageRequest.of(Math.max(page - 1, 0), Math.max(size, 1), Sort.by(Sort.Direction.DESC, "publishedAt", "id"));
         Page<Post> result = postRepository.findAll(buildPublicSpec(keyword, categorySlug), pageable);
         return toPage(result, page, size);
     }
 
+    @Transactional(readOnly = true)
     public PageResponse<PostSummaryResponse> listAdminPosts(int page, int size, String keyword) {
         Pageable pageable = PageRequest.of(Math.max(page - 1, 0), Math.max(size, 1), Sort.by(Sort.Direction.DESC, "updatedAt", "id"));
         Specification<Post> spec = (root, query, cb) -> {
@@ -58,6 +60,7 @@ public class PostService {
         return toPage(result, page, size);
     }
 
+    @Transactional(readOnly = true)
     public PostDetailResponse getPublishedBySlug(String slug) {
         Post post = postRepository.findBySlug(slug)
                 .filter(item -> item.getStatus() == PostStatus.PUBLISHED)
@@ -65,12 +68,14 @@ public class PostService {
         return toDetail(post);
     }
 
+    @Transactional(readOnly = true)
     public PostDetailResponse getById(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new BizException(404, "文章不存在"));
         return toDetail(post);
     }
 
+    @Transactional(readOnly = true)
     public List<PostSummaryResponse> latestPublished() {
         return postRepository.findTop5ByStatusOrderByPublishedAtDescCreatedAtDesc(PostStatus.PUBLISHED).stream()
                 .map(this::toSummary)
