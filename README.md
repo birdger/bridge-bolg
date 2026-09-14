@@ -4,6 +4,7 @@
 
 - 前台博客首页、文章详情、分类筛选
 - 后台登录、文章管理、分类管理
+- **每日工作台**（`/board`）：把 GitHub 今日提交、arXiv 论文雷达、AI 每日汇报、对话摘要和本机操作记录汇总成一页
 - Spring Boot + JPA + MySQL
 - Vue 3 + Vite + Vue Router + Axios
 
@@ -11,6 +12,7 @@
 
 - `backend/` 后端
 - `frontend/` 前端
+- `start-blog.bat` / `stop-blog.bat` 本地一键启停（Windows）
 
 ## 启动
 
@@ -39,6 +41,22 @@ npm run dev
 
 - 用户名：`admin`
 - 密码：`admin123`
+
+## 每日工作台（`/board`）
+
+前台多了一个 `/board` 页面，把「每天发生的事」汇总在一起：GitHub 今日提交、arXiv 论文雷达、
+AI 撰写的每日汇报、Hermes 对话摘要、本机软件与文件操作、历史对话检索。
+它复用博客自身的样式变量，所以明暗主题下都和站点是同一套观感。
+
+数据不经过后端，而是来自本机的一个零依赖看板服务：
+
+- 看板服务：`G:\code\github\workbench\app.py`（纯 Python 标准库，监听 `127.0.0.1:3300`）
+- 前端通过 Vite 代理 `/board-api` → `http://127.0.0.1:3300` 读取，避免跨域
+- 部署到服务器时用 nginx 做同样反代即可，或设 `VITE_BOARD_BASE` 直接指向看板地址
+
+因此本地需要同时跑三样东西：看板服务（3300）+ 后端（8080）+ 前端（5173）。
+Windows 下双击 `start-blog.bat` 一键全部启动，`stop-blog.bat` 全部停止。
+看板服务没开时 `/board` 会给出提示，其余页面不受影响。
 
 ## Docker 部署
 

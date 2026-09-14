@@ -6,9 +6,11 @@ import AdminLayout from '../views/AdminLayout.vue'
 import AdminDashboard from '../views/AdminDashboard.vue'
 import AdminPosts from '../views/AdminPosts.vue'
 import AdminCategories from '../views/AdminCategories.vue'
+import BoardView from '../views/BoardView.vue'
 
 const routes = [
   { path: '/', component: BlogHome },
+  { path: '/board', component: BoardView },
   { path: '/post/:slug', component: BlogPost },
   { path: '/admin/login', component: AdminLogin },
   {
