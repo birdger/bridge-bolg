@@ -4,9 +4,9 @@ REM  Start the whole personal site locally.
 REM
 REM  IMPORTANT: keep this file PURE ASCII. cmd.exe reads .bat bytes
 REM  with the OEM codepage (GBK on zh-CN Windows), so any UTF-8
-REM  non-ASCII text here - even inside echo - corrupts parsing.
-REM  (Verified the hard way: Chinese echo lines made cmd fail with
-REM   "系统找不到指定的文件" and none of the services started.)
+REM  non-ASCII text here - even inside echo or a comment - corrupts
+REM  parsing. Verified the hard way: the Chinese echo lines made cmd
+REM  report "cannot find the file" and none of the services started.
 REM
 REM  Services started:
 REM    1) daily board data service  -> http://127.0.0.1:3300
@@ -20,8 +20,8 @@ setlocal
 set "JAVA=C:\Program Files\Java\jdk-11.0.6\bin\java.exe"
 if not exist "%JAVA%" set "JAVA=java"
 
-set "BE=G:\code\repos\project_8.22\backend"
-set "FE=G:\code\repos\project_8.22\frontend"
+set "BE=G:\code\repos\bridge-bolg\backend"
+set "FE=G:\code\repos\bridge-bolg\frontend"
 set "WB=G:\code\github\workbench"
 
 if not exist "%BE%\target\blog-backend-0.0.1-SNAPSHOT.jar" (
@@ -48,7 +48,9 @@ start "blog-frontend" /min cmd /c "npm run dev"
 popd
 
 echo Waiting for services to come up ...
-timeout /t 12 /nobreak >nul
+REM ping instead of timeout: timeout.exe fails when stdin is redirected and
+REM GNU timeout (git-bash) shadows the Windows one. 13 pings ~= 12 seconds.
+ping -n 13 127.0.0.1 >nul
 start http://localhost:5173/
 
 echo.
