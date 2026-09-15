@@ -8,6 +8,7 @@
         <a class="nav-link" href="#writing">文章</a>
         <a class="nav-link" href="#topics">分类</a>
         <router-link class="nav-link" to="/board">工作台</router-link>
+        <router-link class="nav-link" to="/kb">知识库</router-link>
         <a class="nav-link" href="#about">关于</a>
       </nav>
 
@@ -34,8 +35,9 @@
       <a href="#writing" @click="menuOpen = false"><span>02</span>文章</a>
       <a href="#topics" @click="menuOpen = false"><span>03</span>分类</a>
       <router-link to="/board" @click="menuOpen = false"><span>04</span>工作台</router-link>
-      <a href="#about" @click="menuOpen = false"><span>05</span>关于</a>
-      <router-link to="/admin/login" @click="menuOpen = false"><span>06</span>后台管理</router-link>
+      <router-link to="/kb" @click="menuOpen = false"><span>05</span>知识库</router-link>
+      <a href="#about" @click="menuOpen = false"><span>06</span>关于</a>
+      <router-link to="/admin/login" @click="menuOpen = false"><span>07</span>后台管理</router-link>
     </nav>
   </header>
 </template>

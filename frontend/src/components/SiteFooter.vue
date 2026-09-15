@@ -10,6 +10,7 @@
         <a href="#writing">文章</a>
         <a href="#topics">分类</a>
         <router-link to="/board">工作台</router-link>
+        <router-link to="/kb">知识库</router-link>
         <router-link to="/admin/login">后台管理</router-link>
       </div>
       <div class="site-footer__social">

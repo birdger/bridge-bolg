@@ -7,10 +7,12 @@ import AdminDashboard from '../views/AdminDashboard.vue'
 import AdminPosts from '../views/AdminPosts.vue'
 import AdminCategories from '../views/AdminCategories.vue'
 import BoardView from '../views/BoardView.vue'
+import KbView from '../views/KbView.vue'
 
 const routes = [
   { path: '/', component: BlogHome },
   { path: '/board', component: BoardView },
+  { path: '/kb', component: KbView },
   { path: '/post/:slug', component: BlogPost },
   { path: '/admin/login', component: AdminLogin },
   {

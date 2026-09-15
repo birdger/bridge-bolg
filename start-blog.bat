@@ -1,64 +1,76 @@
 @echo off
 REM ============================================================
-REM  Start the whole personal site locally.
+REM  Start the whole personal site locally (4 services).
 REM
-REM  IMPORTANT: keep this file PURE ASCII. cmd.exe reads .bat bytes
-REM  with the OEM codepage (GBK on zh-CN Windows), so any UTF-8
-REM  non-ASCII text here - even inside echo or a comment - corrupts
-REM  parsing. Verified the hard way: the Chinese echo lines made cmd
-REM  report "cannot find the file" and none of the services started.
+REM  IMPORTANT: keep this file PURE ASCII. cmd.exe reads .bat
+REM  bytes with the OEM codepage (GBK on zh-CN Windows), so any
+REM  UTF-8 non-ASCII text here - even inside echo or a comment -
+REM  corrupts parsing (verified: a Chinese REM line made cmd try
+REM  to run 'git-bash' as a command and nothing started).
 REM
-REM  Services started:
-REM    1) daily board data service  -> http://127.0.0.1:3300
-REM    2) Spring Boot backend + H2  -> http://localhost:8080
-REM    3) Vite dev server           -> http://localhost:5173
-REM  The blog's /board page reads board data through Vite's
-REM  /board-api proxy, so all three must be up.
+REM    1) AIO knowledge base  node    -> http://127.0.0.1:3200
+REM    2) Daily board (data)  python  -> http://127.0.0.1:3300
+REM    3) Blog backend        java    -> http://localhost:8080
+REM    4) Blog frontend       vite    -> http://localhost:5173
+REM
+REM  Pages:  /  blog home   /board  workbench   /kb  knowledge base
+REM          /admin/login    (admin / admin123)
+REM  Stop everything with stop-blog.bat
 REM ============================================================
 setlocal
+set "KB=G:\code\knowledge\aio-kb"
+set "WB=G:\code\github\workbench"
+set "BE=G:\code\repos\bridge-bolg\backend"
+set "FE=G:\code\repos\bridge-bolg\frontend"
+
+set "NODE=C:\nvm4w\nodejs\node.exe"
+if not exist "%NODE%" set "NODE=node"
 
 set "JAVA=C:\Program Files\Java\jdk-11.0.6\bin\java.exe"
 if not exist "%JAVA%" set "JAVA=java"
 
-set "BE=G:\code\repos\bridge-bolg\backend"
-set "FE=G:\code\repos\bridge-bolg\frontend"
-set "WB=G:\code\github\workbench"
+echo.
+echo   Starting the personal site ...
+echo.
 
 if not exist "%BE%\target\blog-backend-0.0.1-SNAPSHOT.jar" (
-  echo [ERROR] backend jar not found. Build it first:
-  echo     cd /d %BE%
-  echo     F:\Environment\maven\apache-maven-3.6.1\bin\mvn.cmd clean package -DskipTests
-  pause
-  exit /b 1
+  echo   [warn] backend jar not found. Build it once with:
+  echo          cd /d "%BE%" ^&^& mvn clean package -DskipTests
+  echo.
 )
 
-echo [1/3] Starting board service on port 3300 ...
-pushd "%WB%"
-start "daily-board" /min cmd /c "set PYTHONIOENCODING=utf-8 && python app.py"
+echo   [1/4] knowledge base  :3200
+pushd "%KB%"
+start "kb" /min "%NODE%" server.js
 popd
 
-echo [2/3] Starting backend on port 8080 ...
+echo   [2/4] daily board     :3300
+start "board" /min cmd /c "cd /d %WB% && set PYTHONIOENCODING=utf-8 && python app.py"
+
+echo   [3/4] blog backend    :8080
 pushd "%BE%"
-start "blog-backend" /min "%JAVA%" -jar target\blog-backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=local
+start "backend" /min "%JAVA%" -jar target\blog-backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=local
 popd
 
-echo [3/3] Starting frontend on port 5173 ...
-pushd "%FE%"
-start "blog-frontend" /min cmd /c "npm run dev"
-popd
+echo   [4/4] blog frontend   :5173
+start "frontend" /min cmd /c "cd /d %FE% && npm run dev"
 
-echo Waiting for services to come up ...
+echo.
+echo   Waiting for services to come up ...
 REM ping instead of timeout: timeout.exe fails when stdin is redirected and
 REM GNU timeout (git-bash) shadows the Windows one. 13 pings ~= 12 seconds.
 ping -n 13 127.0.0.1 >nul
-start http://localhost:5173/
 
 echo.
-echo   Blog home    : http://localhost:5173/
-echo   Board page   : http://localhost:5173/board
-echo   Admin login  : http://localhost:5173/admin/login   (admin / admin123)
-echo   Board alone  : http://127.0.0.1:3300/
-echo   Backend API  : http://localhost:8080/api/public/posts
+echo   ============================================================
+echo     Blog home   : http://localhost:5173/
+echo     Workbench   : http://localhost:5173/board
+echo     Knowledge   : http://localhost:5173/kb
+echo     Admin login : http://localhost:5173/admin/login   admin / admin123
+echo     Board alone : http://127.0.0.1:3300/
+echo     Knowledge   : http://127.0.0.1:3200/   (editor + graph + AI)
+echo     SiYuan      : http://127.0.0.1:6806/   (separate app)
+echo   ============================================================
 echo.
-echo To stop everything, run stop-blog.bat
+start http://localhost:5173/
 exit /b 0

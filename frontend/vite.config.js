@@ -6,6 +6,13 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
+      // 知识库（AIO·知识库本机服务，默认 3200）。连同它自带的 /lib/* 一起转发，
+      // 这样博客可以直接复用它的 marked / DOMPurify，不必新增 npm 依赖。
+      '/kb-api': {
+        target: process.env.KB_ORIGIN || 'http://127.0.0.1:3200',
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/kb-api/, '')
+      },
       '/api': {
         target: 'http://localhost:8080',
         changeOrigin: true
