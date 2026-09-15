@@ -257,7 +257,11 @@ onMounted(loadState)
           <a class="kb-card" :href="SiyuanUrl" target="_blank" rel="noreferrer">
             <span class="kb-card__badge"><BookOpen :size="14" /></span>
             <h3>思源笔记（SiYuan）</h3>
-            <p>块级编辑器与本地内核，端口 6806。若打不开，先运行「一键启动知识库们.bat」。</p>
+            <p>
+              块级编辑器与本地内核，端口 6806。工作区在 <code>G:\code\knowledge\siyuan-workspace</code>；
+              写了东西之后跑一次 <code>siyuan-to-aio-kb.py</code> 就能把笔记并进这里。
+              若打不开，先运行「一键启动知识库们.bat」。
+            </p>
             <span class="text-link">打开思源笔记 <ArrowUpRight :size="14" /></span>
           </a>
         </div>
